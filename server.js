@@ -4,46 +4,31 @@ var http = require("http"),
     path = require("path"),
     fs = require("fs"),
     PubSub = require("pubsub-js"),
-    chokidar = require('chokidar'),
-    port = process.argv[2] || 8443;
+    chokidar = require('chokidar');
+    port = process.argv[2] || 3000;
 
-var isUseHTTPs = true;
 
-    var options = {
+// If acceleromter is available use this app to
+// read x,y,z values.
+var accel_ap_path = '../';
+var accel_ap_name = 'accel_stream'
+
+var options = {};
+var isUseHTTPs = false;
+
+if ( isUseHTTPs ) {
+    options = {
         key: fs.readFileSync("./ssl/key.pem"),
         cert: fs.readFileSync("./ssl/cert.pem")
     };
-
-// var bench = fs.readFileSync("/home/pi/bench_id.txt").toString().trim();
-
-bench = "cam";
-
-var status = {
-  bench: bench,
-  trigger: 0,
-  probability: 0.5,
+    port = 8443;
 }
-
-console.log(`status ${status.bench}`);
 
 // force auto reboot on failures
 var autoRebootServerOnFailure = false;
 
 var server = require(isUseHTTPs ? 'https' : 'http');
 const queryString = require('querystring');
-
-// The connect_me() function alerts the central server
-// that I'd like to start, or join a two way conversation.
-function connect_me() {
-
-}
-
-// The disconnect_me() function will cause the room I'm in
-// to be closed. Both parties will leave the room.
-function disconnect_me() {
-
-}
-
 
 function cmd_exec(cmd, args, cb_stdout, cb_end) {
         var spawn = require('child_process').spawn;
@@ -112,35 +97,25 @@ function serverHandler(request, response) {
                 console.log("servo", query);
 		try {
 		  var movement = buttons[query.camera];
-                  update_servo( movement );
+      update_servo( movement );
 		} catch (err) {
-                  console.warn( err );
-                }
-                response.setHeader('Content-Type', 'application/json');
-                response.setHeader('Cache-Control', 'no-cache, no-store');
-                response.setHeader('Access-Control-Allow-Origin', '*');
-                response.end(JSON.stringify(servos));
-  }
-  else if (uri == '/pistate') {
-                var query = queryString.parse( reqURL.query );
-                if(query['roomid']){ status.roomid = query['roomid']; }
-                console.log("pistate", status);
-                response.setHeader('Content-Type', 'application/json');
-                response.setHeader('Cache-Control', 'no-cache, no-store');
-                response.setHeader('Access-Control-Allow-Origin', '*');
-                status.now = Date.now();
-                response.end(JSON.stringify(status));
+      console.warn( err );
+    }
+    response.setHeader('Content-Type', 'application/json');
+    response.setHeader('Cache-Control', 'no-cache, no-store');
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.end(JSON.stringify(servos));
   }else if (uri == '/image') {
-	// for image requests, return a HTTP multipart document (stream) 
-	boundaryID = "BOUNDARY";
+	    // for image requests, return a HTTP multipart document (stream)
+	    boundaryID = "BOUNDARY";
 
-        response.writeHead(200, {
+      response.writeHead(200, {
             'Content-Type': 'multipart/x-mixed-replace;boundary="' + boundaryID + '"',
             'Connection': 'keep-alive',
             'Expires': 'Fri, 27 May 1977 00:00:00 GMT',
             'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             'Pragma': 'no-cache'
-        });
+      });
 
         //
         // send new frame to client
@@ -200,36 +175,14 @@ function serverHandler(request, response) {
 }
 
 const spawn = require('child_process').spawn;
-var myhost="https://trees.connectedexeter.uk:8443";
-var mypage = myhost + "/listeningtrees/bench.html";
-function spawn_browser(){
-  browser = spawn('/usr/bin/chromium-browser', [mypage],
-    {cwd:'/home/pi/listening-trees-pi-2017',
-     shell:true,
-     stdio:['pipe','pipe','pipe']});
-
-  browser.on('error', function(err) {
-        console.log('spawn_browser. ' + err);
-     });
-
-  browser.on('close', (code) => {
-        console.log(`browser child process exited with code ${code}`);
-  });
-
-  browser.stderr.on('data', (data) => {
-        console.log(`browser stderr: ${data}`);
-  });
-
-  browser.stdio[1].on('data', (data) => {
-    console.log(`browser stdout: ${data}`);
-  });
-}
 
 var maxXYZ = [], minXYZ =[];
 
+
+
 function spawn_accel(){
-  accel = spawn('/home/pi/listening-trees-pi-2017/accel_stream', ['','',''],
-    {cwd:'/home/pi/listening-trees-pi-2017',
+  accel = spawn( accel_ap_path + accel_ap_name, ['','',''],
+    {cwd: accel_ap_path,
      shell:true,
      stdio:['pipe','pipe','pipe']});
 
