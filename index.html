@@ -7,31 +7,38 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>RobotCam</title>
 
-    <!-- Bootstrap -->
-    <link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- script src="libs/aframe.min.js"></script -->
     <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="libs/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
-    <script src="libs/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   </head>
   <body>
 
-    <a-scene>
-      <a-assets>
-        <img id="cam-img-a" src="/image?aaa" >
-        <img id="cam-img-b" src="/image?bbb" >
-      </a-assets>
-      <a-entity camera look-controls mouse-cursor></a-entity>
-      <a-sphere id="sphere" position="0 0 -10" rotation="0 45 0" 
-	phi-length="90" theta-length="90" theta-start="45"
-	height="512" width="256" radius="6" src="#cam-img-a"></a-sphere>
-    </a-scene>
-
-    <!-- image src="/image" / -->
+    <div class="scene-div">
+      <a-scene>
+        <a-entity camera></a-entity>
+        <a-assets>
+          <img id="cam-img-a" src="" >
+          <img id="cam-img-b" src="" >
+        </a-assets>
+        <a-sphere id="sphere" position="0 0 -10" rotation="0 45 0"
+                phi-length="90" theta-length="90" theta-start="45"
+                height="512" width="256" radius="6" color="red"></a-sphere>
+      </a-scene>
+    </div>
+    <div class="control-div">
+      <button id="left">left</button>
+      <button id="up">up</button>
+      <button id="down">down</button>
+      <button id="right">right</button>
+      <span>left-right<input id="left-right" value="0"/></span>
+      <span>up-down<input id="up-down" value="0"/></span>
+    </div>
 
     <script>
       $(document).ready(()=>{
@@ -66,28 +73,16 @@ AFRAME.registerComponent('cursor-listener', {
             imga.setAttribute("src","/image?frame="+idx);
          }
          idx++;
-      }, 3000); 
+      }, 3000);
       });
     </script>
 
-    </script>
-
-    <button id="left">left</button>
-    <button id="up">up</button>
-    <button id="down">down</button>
-    <button id="right">right</button>
-
-    <span>left-right<input id="left-right" value="0"/></span>
-    <span>up-down<input id="up-down" value="0"/></span>
- 
     <script>
     $('#left').click( ()=>{servo("left");} );
     $('#up').click( ()=>{servo("up");} );
     $('#down').click( ()=>{servo("down");} );
     $('#right').click( ()=>{servo("right");} );
-    </script>
 
-    <script>
       function servo(name){
         $.ajax({
         method: 'GET',
@@ -100,7 +95,6 @@ AFRAME.registerComponent('cursor-listener', {
             $('#up-down').val( data["up-down"].position);
 	});
       }
-
 
     </script>
 
