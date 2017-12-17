@@ -36,7 +36,7 @@
         <a-entity camera></a-entity>
         <a-sphere id="sphere" position="0 0 -10" rotation="0 45 0"
 	              phi-length="90" theta-length="90" theta-start="45"
-	              height="512" width="256" radius="6" color="red"></a-sphere>
+	              height="512" width="256" radius="6"></a-sphere>
       </a-scene>
     </div>
     <div class="control-div">
@@ -54,7 +54,23 @@
     $('#down').click( ()=>{servo("down");} );
     $('#right').click( ()=>{servo("right");} );
 
+    var canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 1024;
+
+    var image_x = 512;
+    var image_y = 512;
+    
+    var image = new Image();
+    image.onload = ()=>{
+        canvas.getContext("2d").drawImage(image, image_x, image_y);
+        var image_data = canvas.toDataURL("image/png");
+        console.log( "loaded image" );
+        sphere.setAttribute("src", image_data);
+    }
+
     function servo(name){
+        image.src = "/test-pic.png";
         $.ajax({
         method: 'GET',
         url: '/servo',
@@ -62,11 +78,12 @@
       	})
 	      .done((data)=>{
 	        console.warn( data );
-            $('#left-right').val( data["left-right"].position);
-            $('#up-down').val( data["up-down"].position);
+          $('#left-right').val( data["left-right"].position);
+          $('#up-down').val( data["up-down"].position);
 	      });
     }
     </script>
+
 
   </body>
 </html>
