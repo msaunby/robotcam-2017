@@ -46,6 +46,8 @@
       <button id="right">right</button>
       <span>left-right<input id="left-right" value="0"/></span>
       <span>up-down<input id="up-down" value="0"/></span>
+      <span>x mult<input id="x-mult" value="5"/></span>
+      <span>y mult<input id="y-mult" value="5"/></span>
     </div>
 
     <script>
@@ -60,12 +62,17 @@
 
     var image_x = 512;
     var image_y = 512;
-    
+    var offset_x = 0;
+    var offset_y = 0;
+
     var image = new Image();
     image.onload = ()=>{
-        canvas.getContext("2d").drawImage(image, image_x, image_y);
+        var half_x = image.width >> 1;
+        var half_y = image.height >> 1;
+        canvas.getContext("2d").drawImage(image,
+          offset_x + image_x - half_x,
+          offset_y + image_y - half_y);
         var image_data = canvas.toDataURL("image/png");
-        console.log( "loaded image" );
         sphere.setAttribute("src", image_data);
     }
 
@@ -78,6 +85,8 @@
       	})
 	      .done((data)=>{
 	        console.warn( data );
+          offset_x =  $('#x-mult').val() * data["left-right"].position;
+          offset_y =  $('#y-mult').val() * data["up-down"].position;
           $('#left-right').val( data["left-right"].position);
           $('#up-down').val( data["up-down"].position);
 	      });

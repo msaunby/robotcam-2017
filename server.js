@@ -53,8 +53,8 @@ function cmd_exec(cmd, args, cb_stdout, cb_end) {
 // See https://github.com/richardghirst/PiBits/tree/master/ServoBlaster
 
 var servos = {
-	"up-down":{id:0,position:50,min:10,max:90},      // Default is RPi pin 7
-	 "left-right":{id:1,position:50,min:10,max:90}   // Default is RPi pin 11
+	"up-down":{id:0,position:0,min:-45,max:45},   // Default servo for id 0 RPi pin 7
+	 "left-right":{id:1,position:0,min:-45,max:45} // Default servo for id 1 RPi pin 11
 };
 var buttons = {
 	"left":{servo:"left-right",increment:-5},
