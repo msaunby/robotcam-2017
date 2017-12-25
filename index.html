@@ -15,23 +15,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-  .scene-div {
-    position: relative;
-    z-index: 1;
-  }
-  .control-div {
-    position: absolute;
-    z-index: 3;
-    background: gray;
-    width: 100%;
-    left: 0px;
-    top: 0px;
-  }
-    </style>
+  <style>
+.scene-div {
+  position: relative;
+  z-index: 1;
+}
+.control-div {
+  position: absolute;
+  z-index: 3;
+  background: gray;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+}
+  </style>
   </head>
   <body>
-
     <div class="scene-div">
       <a-scene>
         <a-entity camera></a-entity>
@@ -40,8 +39,8 @@
           <img id="cam-img-b" src="" >
         </a-assets>
         <a-sphere id="sphere" position="0 0 -10" rotation="0 45 0"
-                phi-length="90" theta-length="90" theta-start="45"
-                height="512" width="256" radius="6"></a-sphere>
+	              phi-length="90" theta-length="90" theta-start="45"
+	              height="512" width="256" radius="6"></a-sphere>
       </a-scene>
     </div>
     <div class="control-div">
@@ -51,28 +50,57 @@
       <button id="right">right</button>
       <span>left-right<input id="left-right" value="0"/></span>
       <span>up-down<input id="up-down" value="0"/></span>
+      <span>x mult<input id="x-mult" value="5"/></span>
+      <span>y mult<input id="y-mult" value="5"/></span>
     </div>
 
+    <script>
+    $('#left').click( ()=>{servo("left");} );
+    $('#up').click( ()=>{servo("up");} );
+    $('#down').click( ()=>{servo("down");} );
+    $('#right').click( ()=>{servo("right");} );
+
+    var canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 1024;
+
+    var image_x = 512;
+    var image_y = 512;
+    var offset_x = 0;
+    var offset_y = 0;
+
+    var image = new Image();
+    image.onload = ()=>{
+        var half_x = image.width >> 1;
+        var half_y = image.height >> 1;
+        canvas.getContext("2d").drawImage(image,
+          offset_x + image_x - half_x,
+          offset_y + image_y - half_y);
+        var image_data = canvas.toDataURL("image/png");
+        sphere.setAttribute("src", image_data);
+    }
+
+    function servo(name){
+        image.src = "/test-pic.png";
+        $.ajax({
+        method: 'GET',
+        url: '/servo',
+        data: {"camera":name}
+      	})
+	      .done((data)=>{
+	        console.warn( data );
+          offset_x =  $('#x-mult').val() * data["left-right"].position;
+          offset_y =  $('#y-mult').val() * data["up-down"].position;
+          $('#left-right').val( data["left-right"].position);
+          $('#up-down').val( data["up-down"].position);
+	      });
+    }
+    </script>
     <script>
       $(document).ready(()=>{
       var imga = document.querySelector('#cam-img-a');
       var imgb = document.querySelector('#cam-img-b');
       var sphere = document.querySelector('#sphere');
-
-// Component to change to a sequential color on click.
-AFRAME.registerComponent('cursor-listener', {
-  init: function () {
-    //var lastIndex = -1;
-    //var COLORS = ['red', 'green', 'blue'];
-    this.el.addEventListener('click', function (evt) {
-      //lastIndex = (lastIndex + 1) % COLORS.length;
-      //this.setAttribute('material', 'color', COLORS[lastIndex]);
-      console.log('I was clicked at: ', evt.detail.intersection.point);
-    });
-  }
-});
-      sphere.addEventListener('click', (evt)=>{ console.log(evt); });
-
 
       var idx=0;
       var camTimer = setInterval(()=>{
@@ -90,26 +118,6 @@ AFRAME.registerComponent('cursor-listener', {
       });
     </script>
 
-    <script>
-    $('#left').click( ()=>{servo("left");} );
-    $('#up').click( ()=>{servo("up");} );
-    $('#down').click( ()=>{servo("down");} );
-    $('#right').click( ()=>{servo("right");} );
-
-      function servo(name){
-        $.ajax({
-        method: 'GET',
-        url: '/servo',
-        data: {"camera":name}
-      	})
-	.done((data)=>{
-	    console.warn( data );
-            $('#left-right').val( data["left-right"].position);
-            $('#up-down').val( data["up-down"].position);
-	});
-      }
-
-    </script>
 
   </body>
 </html>
