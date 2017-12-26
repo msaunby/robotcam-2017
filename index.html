@@ -77,8 +77,11 @@
           offset_x + image_x - half_x,
           offset_y + image_y - half_y);
         // Update image uri to keep forcing refresh at
-        // whatever rate we can manage.   
+        // whatever rate we can manage.
         image.src = "/image?" + Date.now();
+    }
+    image.onerror = ()=>{
+      image.src = "/image?" + Date.now();
     }
 
     function servo(name){
