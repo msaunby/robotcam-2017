@@ -81,7 +81,8 @@
     }
 
     function servo(name){
-        image.src = "/test-pic.png";
+        #image.src = "/test-pic.png";
+        image.src = "/image?" + Date.now()
         $.ajax({
         method: 'GET',
         url: '/servo',
@@ -97,6 +98,7 @@
     }
     </script>
     <script>
+    /*
       $(document).ready(()=>{
       var imga = document.querySelector('#cam-img-a');
       var imgb = document.querySelector('#cam-img-b');
@@ -116,6 +118,7 @@
          idx++;
       }, 3000);
       });
+      */
     </script>
 
 
