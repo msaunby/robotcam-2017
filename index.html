@@ -76,12 +76,6 @@
         canvas.getContext("2d").drawImage(image,
           offset_x + image_x - half_x,
           offset_y + image_y - half_y);
-        // Update image uri to keep forcing refresh at
-        // whatever rate we can manage.
-        image.src = "/image?" + Date.now();
-    }
-    image.onerror = ()=>{
-      image.src = "/image?" + Date.now();
     }
 
     function servo(name){
@@ -105,6 +99,7 @@
       var camTimer = setInterval(()=>{
         var image_data = canvas.toDataURL("image/png");
         sphere.setAttribute("src", image_data);
+        image.src = "/image?" + Date.now();
       }, 1000);
     /*
       $(document).ready(()=>{
