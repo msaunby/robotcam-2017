@@ -56,11 +56,26 @@
     </div>
 
     <script>
+
+    var camIntervalId;
+
+    function camLoadFn(){
+      var image_data = canvas.toDataURL("image/png");
+      sphere.setAttribute("src", image_data);
+      image.src = "/image?" + Date.now();
+    }
+
     $('#left').click( ()=>{servo("left");} );
     $('#up').click( ()=>{servo("up");} );
     $('#down').click( ()=>{servo("down");} );
     $('#right').click( ()=>{servo("right");} );
-    $('#pic-refresh').change( ()=>{console.log( "change", Number($('#pic-refresh').val()) );} );
+    $('#pic-refresh').change( ()=>{
+      console.log( "change", Number($('#pic-refresh').val()) );
+      clearInterval( camIntervalId );
+      camIntervalId = setInterval( camLoadFn, Number($('#pic-refresh').val());
+    } );
+
+    camIntervalId = setInterval( camLoadFn, 1000 );
 
     var canvas = document.createElement("canvas");
     canvas.width = 1024;
@@ -98,11 +113,7 @@
     }
     </script>
     <script>
-      var camTimer = setInterval(()=>{
-        var image_data = canvas.toDataURL("image/png");
-        sphere.setAttribute("src", image_data);
-        image.src = "/image?" + Date.now();
-      }, 500);
+
     /*
       $(document).ready(()=>{
       var imga = document.querySelector('#cam-img-a');
