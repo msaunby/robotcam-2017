@@ -121,9 +121,6 @@ function serverHandler(request, response) {
         // send new frame to client
         //
         var subscriber_token = PubSub.subscribe('MJPEG', function(msg, data) {
-
-            //console.log('sending image');
-
             response.write('--' + boundaryID + '\r\n')
             response.write('Content-Type: image/jpeg\r\n');
             response.write('Content-Length: ' + data.length + '\r\n');
@@ -136,10 +133,9 @@ function serverHandler(request, response) {
         // connection is closed when the browser terminates the request
         //
         response.on('close', function() {
-            console.log("Connection closed!");
             PubSub.unsubscribe(subscriber_token);
             response.end();
-});
+        });
   }else if (uri == '/piset') {
                 var query = queryString.parse( reqURL.query );
                 response.end();
