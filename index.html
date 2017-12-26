@@ -52,6 +52,7 @@
       <span>up-down<input id="up-down" value="0"/></span>
       <span>x mult<input id="x-mult" value="5"/></span>
       <span>y mult<input id="y-mult" value="5"/></span>
+      <span>refresh rate<input id="pic-refresh" value="1000"/></span>
     </div>
 
     <script>
@@ -59,6 +60,7 @@
     $('#up').click( ()=>{servo("up");} );
     $('#down').click( ()=>{servo("down");} );
     $('#right').click( ()=>{servo("right");} );
+    $('#pic-refresh').change( ()=>{console.log( "change", Number($('#pic-refresh').val()) );} );
 
     var canvas = document.createElement("canvas");
     canvas.width = 1024;
@@ -100,7 +102,7 @@
         var image_data = canvas.toDataURL("image/png");
         sphere.setAttribute("src", image_data);
         image.src = "/image?" + Date.now();
-      }, 1000);
+      }, 500);
     /*
       $(document).ready(()=>{
       var imga = document.querySelector('#cam-img-a');
