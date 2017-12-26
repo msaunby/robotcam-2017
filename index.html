@@ -72,7 +72,7 @@
     $('#pic-refresh').change( ()=>{
       console.log( "change", Number($('#pic-refresh').val()) );
       clearInterval( camIntervalId );
-      camIntervalId = setInterval( camLoadFn, Number($('#pic-refresh').val());
+      camIntervalId = setInterval( camLoadFn, Number($('#pic-refresh').val()) );
     } );
 
     camIntervalId = setInterval( camLoadFn, 1000 );
