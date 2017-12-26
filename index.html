@@ -76,13 +76,14 @@
         canvas.getContext("2d").drawImage(image,
           offset_x + image_x - half_x,
           offset_y + image_y - half_y);
-        //var image_data = canvas.toDataURL("image/png");
-        //sphere.setAttribute("src", image_data);
+        // Update image uri to keep forcing refresh at
+        // whatever rate we can manage.   
+        image.src = "/image?" + Date.now();
     }
 
     function servo(name){
         // image.src = "/test-pic.png";
-        image.src = "/image?" + Date.now()
+        image.src = "/image?" + Date.now();
         $.ajax({
         method: 'GET',
         url: '/servo',
